@@ -165,7 +165,7 @@ class ReminderListFragment : BaseFragment() {
         startActivityForResult(
             AuthUI.getInstance()
                 .createSignInIntentBuilder()
-              //  .setIsSmartLockEnabled(BuildConfig.DEBUG, true)
+                .setIsSmartLockEnabled(BuildConfig.DEBUG, true)
                 .setAvailableProviders(providers)
                 .build(),
             SIGN_IN_REQUEST_CODE
