@@ -59,19 +59,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/auth_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/login_button_text"
-                android:layout_margin="@dimen/text_margin"
-                android:background="@color/colorAccent"
-                android:padding="@dimen/text_padding"
-                android:textColor="@color/white"
-                android:textSize="@dimen/button_text_size"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                tools:text="@string/login_button_text"/>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/addReminderFAB"
