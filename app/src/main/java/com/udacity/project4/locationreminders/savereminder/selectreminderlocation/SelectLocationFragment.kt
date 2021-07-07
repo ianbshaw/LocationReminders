@@ -2,6 +2,7 @@ package com.udacity.project4.locationreminders.savereminder.selectreminderlocati
 
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.IntentSender
@@ -32,6 +33,7 @@ import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import kotlinx.android.synthetic.main.fragment_select_location.*
 import org.koin.android.ext.android.inject
+import java.util.*
 
 class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
@@ -41,11 +43,13 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private lateinit var map: GoogleMap
     private var selectedLocation: LatLng? = null
 
+    private val TAG = SelectLocationFragment::class.java.simpleName
+
     private val REQUEST_LOCATION_PERMISSION = 1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_select_location, container, false)
 
@@ -98,7 +102,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(homeLatLng, zoomLevel))
         map.addMarker(MarkerOptions().position(homeLatLng))
         setMapStyle(map)
-        setOnMapClickListener(map)
+        setMapLongClick(map)
 
     /*    map.moveCamera(CameraUpdateFactory.newLatLngZoom(homeLatLng, zoomLevel))
         map.addMarker(MarkerOptions().position(homeLatLng))*/
@@ -113,6 +117,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         return ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
+    @SuppressLint("MissingPermission")
     private fun enableMyLocation() {
         if (isPermissionGranted()) {
             map.isMyLocationEnabled = true
@@ -161,20 +166,22 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         }*/
     }
 
-    private fun setOnMapClickListener(map: GoogleMap) {
-        map.setOnMapClickListener { latLng ->
-            selectedLocation = latLng
-
-            map.clear()
+    private fun setMapLongClick(map:GoogleMap) {
+        map.setOnMapLongClickListener { latLng ->
+            // A Snippet is Additional text that's displayed below the title.
+            val snippet = String.format(
+                Locale.getDefault(),
+                "Lat: %1$.5f, Long: %2$.5f",
+                latLng.latitude,
+                latLng.longitude
+            )
             map.addMarker(
                 MarkerOptions()
                     .position(latLng)
                     .title(getString(R.string.dropped_pin))
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                    .snippet(snippet)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
             )
-
-            _viewModel.reminderSelectedLocationStr.value = "%.5f %.5f".format(latLng.latitude, latLng.longitude)
-            select_location_button.isEnabled = true
         }
     }
 
@@ -223,10 +230,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                 )
             )
             if (!success) {
-                //Timber.w("Map style parsing failed.")
+                Log.e(TAG, "Style parsing failed.")
             }
         } catch (e: Exception) {
-          //  Timber.e("setMapStyle: ${e.localizedMessage}")
+            Log.e(TAG, "Can't find style. Error: ", e)
         }
     }
 

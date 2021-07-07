@@ -50,6 +50,27 @@ class ReminderListFragmentTest {
         ServiceLocator.resetRepository()
     }
 
+/*    @Test
+    fun clickLogoutButton_navigateToAuthenticationActivity() {
+        // GIVEN - On the home screen
+        val scenario = launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
+        val navController = mock(NavController::class.java)
+        scenario.onFragment {
+            Navigation.setViewNavController(it.view!!, navController)
+        }
+        scenario.
+
+        // WHEN - Click on the "logout" button
+        onView(withId(R.id.logout)).perform(click())
+
+        // THEN - Verify that we navigate to the add screen
+        verify(navController).navigate(
+            ReminderListFragmentDirections.toSaveReminder()
+        )
+
+        verify(startActivity(intent))
+    }*/
+
     @Test
     fun clickAddReminderButton_navigateToSaveReminderFragment() {
         // GIVEN - On the home screen
