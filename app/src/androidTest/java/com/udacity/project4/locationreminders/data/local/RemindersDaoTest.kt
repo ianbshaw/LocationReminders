@@ -71,7 +71,7 @@ class RemindersDaoTest {
             50.0, 50.0)
         database.reminderDao().saveReminder(reminder)
 
-        // WHEN - Get the reminder by id from the database.
+        // WHEN - Delete reminders and get list
         database.reminderDao().deleteAllReminders()
         val loaded = database.reminderDao().getReminders()
 
