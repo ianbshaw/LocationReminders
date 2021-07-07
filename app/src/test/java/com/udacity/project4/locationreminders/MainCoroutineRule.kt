@@ -1,3 +1,5 @@
+package com.udacity.project4.locationreminders
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -15,7 +17,7 @@ import org.junit.runner.Description
  *
  * ```
  * @get:Rule
- * var mainCoroutineRule = MainCoroutineRule()
+ * var mainCoroutineRule = com.udacity.project4.locationreminders.MainCoroutineRule()
  * ```
  *
  * Use it directly as a [TestCoroutineScope]:
