@@ -54,6 +54,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion"
     implementation "junit:junit:$junitVersion"
+    implementation "androidx.arch.core:core-testing:$archTestingVersion"
 
     implementation "androidx.cardview:cardview:$cardVersion"
     implementation "com.google.android.material:material:$materialVersion"
