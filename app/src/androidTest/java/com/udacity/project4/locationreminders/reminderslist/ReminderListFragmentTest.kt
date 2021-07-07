@@ -17,6 +17,7 @@ import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.local.FakeAndroidTestDataSource
 import com.udacity.project4.locationreminders.data.local.RemindersLocalRepository
 import com.udacity.project4.locationreminders.savereminder.SaveReminderFragment
+import com.udacity.project4.locationreminders.savereminder.SaveReminderFragmentDirections
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
@@ -33,7 +34,6 @@ import org.mockito.Mockito.verify
 @MediumTest
 class ReminderListFragmentTest {
 
-//    TODO: test the navigation of the fragments.
 //    TODO: test the displayed data on the UI.
 //    TODO: add testing for the error messages.
 
@@ -65,6 +65,42 @@ class ReminderListFragmentTest {
         // THEN - Verify that we navigate to the add screen
         verify(navController).navigate(
             ReminderListFragmentDirections.toSaveReminder()
+        )
+    }
+
+    @Test
+    fun clickSaveReminderButton_navigateToRemindersListFragment() {
+        // GIVEN - On the home screen
+        val scenario = launchFragmentInContainer<SaveReminderFragment>(Bundle(), R.style.AppTheme)
+        val navController = mock(NavController::class.java)
+        scenario.onFragment {
+            Navigation.setViewNavController(it.view!!, navController)
+        }
+
+        // WHEN - Click on the "+" button
+        onView(withId(R.id.saveReminder)).perform(click())
+
+        // THEN - Verify that we navigate to the add screen
+        verify(navController).navigate(
+            SaveReminderFragmentDirections.actionSaveReminderFragmentToReminderListFragment()
+        )
+    }
+
+    @Test
+    fun clickSelectLocationButton_navigateToSelectLocationFragment() {
+        // GIVEN - On the home screen
+        val scenario = launchFragmentInContainer<SaveReminderFragment>(Bundle(), R.style.AppTheme)
+        val navController = mock(NavController::class.java)
+        scenario.onFragment {
+            Navigation.setViewNavController(it.view!!, navController)
+        }
+
+        // WHEN - Click on the location button
+        onView(withId(R.id.selectLocation)).perform(click())
+
+        // THEN - Verify that we navigate to the add screen
+        verify(navController).navigate(
+            SaveReminderFragmentDirections.actionSaveReminderFragmentToSelectLocationFragment()
         )
     }
 }
