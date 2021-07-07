@@ -43,14 +43,14 @@ class SaveReminderViewModelTest {
     var instantExecutorRule = InstantTaskExecutorRule()
 
     @Before
-    fun setupVM() {
+    fun setup() {
         app = getApplicationContext()
         datasource = FakeDataSource()
         saveReminderViewModel = SaveReminderViewModel(app, datasource)
     }
 
     @After
-    fun tearDown() {
+    fun cleanUp() {
         stopKoin()
     }
 
