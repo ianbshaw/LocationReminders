@@ -36,6 +36,7 @@
     <string name="err_select_location">Please select location</string>
     <string name="login_prompt">Login to set customizations!</string>
     <string name="login_btn">Login</string>
+    <string name="reminder_id">reminderId</string>
 
     <!--Shared Preference Keys -->
     <string name="preference_fact_type_key">fact_type_pref</string>
