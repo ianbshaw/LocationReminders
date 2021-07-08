@@ -55,7 +55,7 @@ class SaveReminderViewModelTest {
     }
 
     @Test
-    fun onClear_removeAttrs() {
+    fun onClear_removeReminder() {
         saveReminderViewModel.apply {
             reminderTitle.value = "TITLE1"
             reminderDescription.value = "DESC1"

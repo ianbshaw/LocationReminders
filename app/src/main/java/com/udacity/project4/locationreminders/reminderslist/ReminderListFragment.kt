@@ -9,6 +9,7 @@ import com.udacity.project4.authentication.AuthenticationActivity
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentRemindersBinding
+import com.udacity.project4.locationreminders.RemindersActivity
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import com.udacity.project4.utils.setTitle
 import com.udacity.project4.utils.setup
@@ -80,6 +81,8 @@ class ReminderListFragment : BaseFragment() {
             R.id.logout -> {
                 val intent = Intent(context, AuthenticationActivity::class.java)
                 startActivity(intent)
+                //intent = Intent(context, RemindersActivity::class.java)
+                this.requireActivity().finish()
             }
         }
         return super.onOptionsItemSelected(item)

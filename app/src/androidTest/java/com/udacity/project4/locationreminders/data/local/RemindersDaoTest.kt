@@ -62,7 +62,7 @@ class RemindersDaoTest {
     }
 
     @Test
-    fun saveReminderAndDelete() = runBlockingTest {
+    fun deleteRemindersAndGetReminders() = runBlockingTest {
         // GIVEN - Save a reminder.
         val reminder = ReminderDTO("title", "description", "location",
             50.0, 50.0)
