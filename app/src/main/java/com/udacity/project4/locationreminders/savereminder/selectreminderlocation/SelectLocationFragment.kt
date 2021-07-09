@@ -51,8 +51,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         setDisplayHomeAsUpEnabled(true)
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        val mapFragment = childFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
         return binding.root
@@ -82,9 +81,9 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
     private fun isPermissionGranted() : Boolean {
-        return ContextCompat.checkSelfPermission(
-            this.requireContext(),
-            Manifest.permission.ACCESS_FINE_LOCATION) === PackageManager.PERMISSION_GRANTED
+        return ActivityCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun enableMyLocation() {
@@ -92,10 +91,11 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             map.setMyLocationEnabled(true)
         }
         else {
-            this.requestPermissions(
+            /*this.requestPermissions(
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 REQUEST_LOCATION_PERMISSION
-            )
+            )*/
+            requestLocationPermission()
         }
     }
 
@@ -163,8 +163,14 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         // Check if location permissions are granted and if so enable the
         // location data layer.
         if (requestCode == REQUEST_LOCATION_PERMISSION) {
-            if (grantResults.size > 0 && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+            if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 enableMyLocation()
+            } else {
+                Snackbar.make( binding.root
+                    , R.string.permission_denied_explanation
+                    , Snackbar.LENGTH_INDEFINITE
+                ).setAction(R.string.dismiss) { }
+                    .show()
             }
         }
     }
