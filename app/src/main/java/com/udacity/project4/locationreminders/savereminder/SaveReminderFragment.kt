@@ -86,15 +86,20 @@ class SaveReminderFragment : BaseFragment() {
 
             val reminder = ReminderDataItem(title, description, location, latitude, longitude)
 
-            geofencingClient.addGeofences(getGeofencingRequest(reminder), geofencePendingIntent)?.run {
-                addOnSuccessListener {
-                    Log.d(TAG, "Location added!!!")
-                    // save reminder to local db
-                    _viewModel.validateAndSaveReminder(reminder)
-                }
-                addOnFailureListener {
-                    // show a Toast to alert the user: "Failed to add location!!! Try again later!"
-                }
+            if (latitude != null && longitude != null && title != null && description != null) {
+                geofencingClient.addGeofences(getGeofencingRequest(reminder), geofencePendingIntent)
+                    ?.run {
+                        addOnSuccessListener {
+                            Log.d(TAG, "Location added!!!")
+                            // save reminder to local db
+                            _viewModel.validateAndSaveReminder(reminder)
+                        }
+                        addOnFailureListener {
+                            // show a Toast to alert the user: "Failed to add location!!! Try again later!"
+                        }
+                    }
+            } else {
+                binding.viewModel!!.showToast.value = "Enter Reminder data"
             }
 
             _viewModel.navigationCommand.value =
