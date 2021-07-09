@@ -46,7 +46,6 @@ class SaveReminderFragment : BaseFragment() {
     //Get the view model this time as a single to be shared with the another fragment
      override val _viewModel by sharedViewModel<SaveReminderViewModel>()
     private lateinit var binding: FragmentSaveReminderBinding
-    private lateinit var reminder: ReminderDataItem
 
     private lateinit var geofencingClient: GeofencingClient
     private val geofencePendingIntent: PendingIntent by lazy {
@@ -90,10 +89,11 @@ class SaveReminderFragment : BaseFragment() {
             val latitude = _viewModel.latitude.value
             val longitude = _viewModel.longitude.value
 
-            reminder = ReminderDataItem(title, description, location, latitude, longitude)
+            val reminder = ReminderDataItem(title, description, location, latitude, longitude)
 
-            if (latitude != null && longitude != null && title != null && description != null) {
-                checkPermissionsAndStartGeofencing()
+            if (latitude != null && longitude != null) {
+                checkPermissionsAndStartGeofencing(reminder)
+                _viewModel.validateAndSaveReminder(reminder)
                 _viewModel.showToast.value = "Reminder Added!"
             } else {
                 _viewModel.showToast.value = "Please enter Reminder Details"
@@ -124,23 +124,16 @@ class SaveReminderFragment : BaseFragment() {
         geofencingClient = LocationServices.getGeofencingClient(requireActivity().application)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_TURN_DEVICE_LOCATION_ON) {
-            checkDeviceLocationSettingsAndStartGeofence(false)
-        }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         //make sure to clear the view model after destroy, as it's a single view model.
         _viewModel.onClear()
     }
 
-    private fun checkPermissionsAndStartGeofencing() {
+    private fun checkPermissionsAndStartGeofencing(reminder: ReminderDataItem) {
        // if (viewModel.geofenceIsActive()) return
         if (foregroundAndBackgroundLocationPermissionApproved()) {
-            checkDeviceLocationSettingsAndStartGeofence()
+            checkDeviceLocationSettingsAndStartGeofence(true, reminder)
         } else {
             requestForegroundAndBackgroundLocationPermissions()
         }
@@ -150,7 +143,7 @@ class SaveReminderFragment : BaseFragment() {
      * Starts the permission check and Geofence process only if the Geofence associated with the
      * current hint isn't yet active.
      */
-    private fun checkDeviceLocationSettingsAndStartGeofence(resolve:Boolean = true) {
+    private fun checkDeviceLocationSettingsAndStartGeofence(resolve:Boolean = true, reminder: ReminderDataItem) {
         val locationRequest = LocationRequest.create().apply {
             priority = LocationRequest.PRIORITY_LOW_POWER
         }
@@ -171,22 +164,22 @@ class SaveReminderFragment : BaseFragment() {
                     binding.fragmentSaveReminder,
                     R.string.location_required_error, Snackbar.LENGTH_INDEFINITE
                 ).setAction(android.R.string.ok) {
-                    checkDeviceLocationSettingsAndStartGeofence()
+                    checkDeviceLocationSettingsAndStartGeofence(true, reminder)
                 }.show()
             }
         }
         locationSettingsResponseTask.addOnCompleteListener {
             if ( it.isSuccessful ) {
-                addGeofence()
+                addGeofence(reminder)
             }
         }
     }
 
 
-    private fun addGeofence() {
+    private fun addGeofence(reminder: ReminderDataItem) {
         val geofence = Geofence.Builder()
-            .setRequestId(_viewModel.id.value!!)
-            .setCircularRegion(_viewModel.latitude.value!!, _viewModel.longitude.value!!, GEOFENCE_RADIUS_IN_METERS)
+            .setRequestId(reminder.id)
+            .setCircularRegion(reminder.latitude!!, reminder.longitude!!, GEOFENCE_RADIUS_IN_METERS)
             .setExpirationDuration(GEOFENCE_EXPIRATION_IN_MILLISECONDS)
             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
             .build()
@@ -289,7 +282,10 @@ class SaveReminderFragment : BaseFragment() {
                     })
                 }.show()
         } else {
-            checkDeviceLocationSettingsAndStartGeofence()
+            requestPermissions(
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                REQUEST_LOCATION_PERMISSION
+            )
         }
     }
 }
