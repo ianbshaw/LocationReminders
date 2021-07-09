@@ -89,17 +89,4 @@ class RemindersLocalRepositoryTest {
         assertThat(result.data, `is`(emptyList()))
     }
 
-/*    @Test
-    fun getReminderAndCheckError() = runBlocking {
-        // Given a new task in the persistent repository
-        localDataSource.deleteAllReminders()
-        val result = localDataSource.getReminder("errorteststring")
-
-        // When completed in the persistent repository
-     //   val result = localDataSource.getReminders() as Result.Success
-
-        // Then the task can be retrieved from the persistent repository and is complete
-        assertThat(result, `is`(emptyList()))
-    }*/
-
 }
