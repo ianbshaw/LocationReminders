@@ -109,7 +109,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             Snackbar.make( binding.root
                 , R.string.location_required_error
                 , Snackbar.LENGTH_INDEFINITE
-            ).setAction(R.string.permit) { requestPermissions( arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+            ).setAction(R.string.permit) { requestPermissions( arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
                 , REQUEST_LOCATION_PERMISSION
             )
             }
@@ -117,7 +117,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                 .show()
         } else {
             requestPermissions(
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 REQUEST_LOCATION_PERMISSION
             )
         }

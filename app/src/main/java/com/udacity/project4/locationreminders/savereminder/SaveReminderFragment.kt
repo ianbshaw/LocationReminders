@@ -109,8 +109,8 @@ class SaveReminderFragment : BaseFragment() {
 
 
 
-            _viewModel.navigationCommand.value =
-                NavigationCommand.To(SaveReminderFragmentDirections.actionSaveReminderFragmentToReminderListFragment())
+         /*   _viewModel.navigationCommand.value =
+                NavigationCommand.To(SaveReminderFragmentDirections.actionSaveReminderFragmentToReminderListFragment())*/
           //  addGeofence(reminder.id, reminder.latitude!!, reminder.longitude!!)
         }
         geofencingClient = LocationServices.getGeofencingClient(requireActivity().application)
@@ -247,8 +247,7 @@ class SaveReminderFragment : BaseFragment() {
             else -> REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
         }
         Log.d(TAG, "Request foreground only location permission")
-        ActivityCompat.requestPermissions(
-            activity!!.parent,
+        requestPermissions(
             permissionsArray,
             resultCode
         )
