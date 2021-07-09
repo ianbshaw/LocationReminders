@@ -194,6 +194,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                     .title(poi.name)
             )
             poiMarker.showInfoWindow()
+            _viewModel.reminderSelectedLocationStr.value = poi.name
             select_location_button.isEnabled = true
         }
     }
@@ -216,6 +217,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                     .snippet(snippet)
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
             )
+            _viewModel.reminderSelectedLocationStr.value = "%.5f %.5f".format(latLng.latitude, latLng.longitude)
             select_location_button.isEnabled = true
         }
     }
