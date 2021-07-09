@@ -86,9 +86,9 @@ class SaveReminderFragment : BaseFragment() {
 
             reminder = ReminderDataItem(title, description, location, latitude, longitude)
 
-            /*if (latitude != null && longitude != null && title != null && description != null) {
-                checkDeviceLocationSettingsAndStartGeofence(false)
-            }*/
+            if (latitude != null && longitude != null && title != null && description != null) {
+                checkPermissionsAndStartGeofencing()
+            }
 
             /*if (latitude != null && longitude != null && title != null && description != null) {
                 geofencingClient.addGeofences(getGeofencingRequest(reminder), geofencePendingIntent)
@@ -204,7 +204,7 @@ class SaveReminderFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
-        checkPermissionsAndStartGeofencing()
+        //checkPermissionsAndStartGeofencing()
     }
 
     /*
