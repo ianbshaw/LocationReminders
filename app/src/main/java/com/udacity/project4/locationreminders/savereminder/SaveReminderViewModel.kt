@@ -21,6 +21,7 @@ class SaveReminderViewModel(val app: Application, private val dataSource: Remind
     val selectedPOI = MutableLiveData<PointOfInterest>()
     val latitude = MutableLiveData<Double>()
     val longitude = MutableLiveData<Double>()
+    val id = MutableLiveData<String>()
 
     /**
      * Clear the live data objects to start fresh next time the view model gets called
@@ -32,6 +33,7 @@ class SaveReminderViewModel(val app: Application, private val dataSource: Remind
         selectedPOI.value = null
         latitude.value = null
         longitude.value = null
+        id.value = null
     }
 
     /**

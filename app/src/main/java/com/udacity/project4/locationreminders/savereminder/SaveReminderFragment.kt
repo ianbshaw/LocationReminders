@@ -38,7 +38,6 @@ val GEOFENCE_EXPIRATION_IN_MILLISECONDS = TimeUnit.DAYS.toMillis(7)
 
 class SaveReminderFragment : BaseFragment() {
     //Get the view model this time as a single to be shared with the another fragment
-  //  override val _viewModel: SaveReminderViewModel by inject()
      override val _viewModel by sharedViewModel<SaveReminderViewModel>()
     private lateinit var binding: FragmentSaveReminderBinding
     private lateinit var reminder: ReminderDataItem
@@ -69,7 +68,6 @@ class SaveReminderFragment : BaseFragment() {
         return binding.root
     }
 
-    @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = this
@@ -124,31 +122,6 @@ class SaveReminderFragment : BaseFragment() {
         }
     }
 
-    private fun getGeofencingRequest(reminder: ReminderDataItem): GeofencingRequest {
-        val geofence = Geofence.Builder()
-            .setRequestId(reminder.id)
-            .setCircularRegion(reminder.latitude!!, reminder.longitude!!, GEOFENCE_RADIUS_IN_METERS)
-            .setExpirationDuration(GEOFENCE_EXPIRATION_IN_MILLISECONDS)
-            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
-            .build()
-        return GeofencingRequest.Builder().apply {
-            setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
-            addGeofences(listOf(geofence))
-        }.build()
-    }
-
-
-    fun removeGeofence() {
-        geofencingClient.removeGeofences(geofencePendingIntent).run {
-            addOnSuccessListener {
-
-            }
-            addOnFailureListener {
-
-            }
-        }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         //make sure to clear the view model after destroy, as it's a single view model.
@@ -195,16 +168,16 @@ class SaveReminderFragment : BaseFragment() {
         }
         locationSettingsResponseTask.addOnCompleteListener {
             if ( it.isSuccessful ) {
-                addGeofence(reminder.id, reminder.latitude!!, reminder.longitude!!)
+                addGeofence()
             }
         }
     }
 
 
-    private fun addGeofence(id: String, lat: Double, lng: Double) {
+    private fun addGeofence() {
         val geofence = Geofence.Builder()
-            .setRequestId(id)
-            .setCircularRegion(lat, lng, GEOFENCE_RADIUS_IN_METERS)
+            .setRequestId(_viewModel.id.value!!)
+            .setCircularRegion(_viewModel.latitude.value!!, _viewModel.longitude.value!!, GEOFENCE_RADIUS_IN_METERS)
             .setExpirationDuration(GEOFENCE_EXPIRATION_IN_MILLISECONDS)
             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
             .build()
@@ -227,7 +200,6 @@ class SaveReminderFragment : BaseFragment() {
         }
 
         Log.i(TAG,"Location permission not granted.")
-        // TODO request permission
     }
 
     override fun onStart() {
