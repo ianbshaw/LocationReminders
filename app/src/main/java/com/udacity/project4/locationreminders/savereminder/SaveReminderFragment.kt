@@ -282,10 +282,7 @@ class SaveReminderFragment : BaseFragment() {
                     })
                 }.show()
         } else {
-            requestPermissions(
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                REQUEST_LOCATION_PERMISSION
-            )
+            checkDeviceLocationSettingsAndStartGeofence(true, _viewModel.getReminderDataItem())
         }
     }
 }
