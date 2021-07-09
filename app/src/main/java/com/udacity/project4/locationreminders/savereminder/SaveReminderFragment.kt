@@ -88,9 +88,9 @@ class SaveReminderFragment : BaseFragment() {
 
             reminder = ReminderDataItem(title, description, location, latitude, longitude)
 
-            if (latitude != null && longitude != null && title != null && description != null) {
+            /*if (latitude != null && longitude != null && title != null && description != null) {
                 checkDeviceLocationSettingsAndStartGeofence(false)
-            }
+            }*/
 
             /*if (latitude != null && longitude != null && title != null && description != null) {
                 geofencingClient.addGeofences(getGeofencingRequest(reminder), geofencePendingIntent)
@@ -153,6 +153,15 @@ class SaveReminderFragment : BaseFragment() {
         super.onDestroy()
         //make sure to clear the view model after destroy, as it's a single view model.
         _viewModel.onClear()
+    }
+
+    private fun checkPermissionsAndStartGeofencing() {
+       // if (viewModel.geofenceIsActive()) return
+        if (foregroundAndBackgroundLocationPermissionApproved()) {
+            checkDeviceLocationSettingsAndStartGeofence()
+        } else {
+            requestForegroundAndBackgroundLocationPermissions()
+        }
     }
 
     /**
@@ -219,6 +228,11 @@ class SaveReminderFragment : BaseFragment() {
 
         Log.i(TAG,"Location permission not granted.")
         // TODO request permission
+    }
+
+    override fun onStart() {
+        super.onStart()
+        checkPermissionsAndStartGeofencing()
     }
 
     /*
