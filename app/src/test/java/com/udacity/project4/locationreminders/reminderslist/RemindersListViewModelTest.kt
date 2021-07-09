@@ -6,7 +6,10 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.udacity.project4.locationreminders.data.FakeDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
+import com.udacity.project4.locationreminders.getOrAwaitValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
+import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.core.IsEqual
 import org.junit.Assert.assertThat
 import org.junit.Before
@@ -57,6 +60,18 @@ class RemindersListViewModelTest {
         //Then viewmodel list equal to loaded list
         assertThat(reminderList, IsEqual(listData))
 
+    }
+
+    @Test
+    fun loadStatisticsWhenRemindersAreUnavailable_callErrorToDisplay() {
+        // Make the repository return errors.
+        datasource.setReturnError(true)
+        runBlocking { datasource.refreshReminders() }
+        remindersListViewModel.loadReminders()
+
+        // Then empty and error are true (which triggers an error message to be shown).
+        assertThat(remindersListViewModel.empty.getOrAwaitValue(), `is`(true))
+        assertThat(remindersListViewModel.error.getOrAwaitValue(), `is`(true))
     }
 
 }
