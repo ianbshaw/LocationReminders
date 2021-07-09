@@ -13,6 +13,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.*
+import org.junit.Assert.assertThat
 import org.junit.runner.RunWith
 
 @ExperimentalCoroutinesApi
@@ -58,16 +59,18 @@ class RemindersLocalRepositoryTest {
         localDataSource.saveReminder(reminder)
 
         // WHEN  - Task retrieved by ID
-        val result = localDataSource.getReminder(reminder.id) as Result.Success
+        val result = localDataSource.getReminder(reminder.id)
 
         // THEN - Same task is returned
-        Assert.assertThat(result.data.title, `is`("title"))
-        Assert.assertThat(result.data.description, `is`("description"))
-        Assert.assertThat(result.data.location, `is`("location"))
-        Assert.assertThat(result.data.latitude, `is`(50.0))
-        Assert.assertThat(result.data.longitude, `is`(50.0))
+        assertThat(result.succeeded, `is`(true))
+        result as Result.Success
+        assertThat(result.data.title, `is`("title"))
+        assertThat(result.data.description, `is`("description"))
+        assertThat(result.data.location, `is`("location"))
+        assertThat(result.data.latitude, `is`(50.0))
+        assertThat(result.data.longitude, `is`(50.0))
 
-        Assert.assertThat(result.succeeded, `is`(true))
+        assertThat(result.succeeded, `is`(true))
     }
 
     @Test
@@ -78,10 +81,25 @@ class RemindersLocalRepositoryTest {
 
         // When completed in the persistent repository
         localDataSource.deleteAllReminders()
-        val result = localDataSource.getReminders() as Result.Success
+        val result = localDataSource.getReminders()
 
         // Then the task can be retrieved from the persistent repository and is complete
-        Assert.assertThat(result.data, `is`(emptyList()))
+        assertThat(result.succeeded, `is`(true))
+        result as Result.Success
+        assertThat(result.data, `is`(emptyList()))
     }
+
+/*    @Test
+    fun getReminderAndCheckError() = runBlocking {
+        // Given a new task in the persistent repository
+        localDataSource.deleteAllReminders()
+        val result = localDataSource.getReminder("errorteststring")
+
+        // When completed in the persistent repository
+     //   val result = localDataSource.getReminders() as Result.Success
+
+        // Then the task can be retrieved from the persistent repository and is complete
+        assertThat(result, `is`(emptyList()))
+    }*/
 
 }

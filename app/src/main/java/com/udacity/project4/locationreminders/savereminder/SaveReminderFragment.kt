@@ -41,6 +41,7 @@ class SaveReminderFragment : BaseFragment() {
      override val _viewModel by sharedViewModel<SaveReminderViewModel>()
     private lateinit var binding: FragmentSaveReminderBinding
     private lateinit var reminder: ReminderDataItem
+    private val REQUEST_LOCATION_PERMISSION = 1
 
     private lateinit var geofencingClient: GeofencingClient
     private val geofencePendingIntent: PendingIntent by lazy {
@@ -251,5 +252,24 @@ class SaveReminderFragment : BaseFragment() {
             permissionsArray,
             resultCode
         )
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray) {
+        // Check if location permissions are granted and if so enable the
+        // location data layer.
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                checkPermissionsAndStartGeofencing()
+            } else {
+                Snackbar.make( binding.root
+                    , R.string.permission_denied_explanation
+                    , Snackbar.LENGTH_INDEFINITE
+                ).setAction(R.string.dismiss) { }
+                    .show()
+            }
+        }
     }
 }
