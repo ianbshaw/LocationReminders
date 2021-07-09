@@ -94,6 +94,9 @@ class SaveReminderFragment : BaseFragment() {
 
             if (latitude != null && longitude != null && title != null && description != null) {
                 checkPermissionsAndStartGeofencing()
+                _viewModel.showToast.value = "Reminder Added!"
+            } else {
+                _viewModel.showToast.value = "Please enter Reminder Details"
             }
 
             /*if (latitude != null && longitude != null && title != null && description != null) {
