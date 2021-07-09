@@ -95,7 +95,7 @@ class SaveReminderFragment : BaseFragment() {
                             _viewModel.validateAndSaveReminder(reminder)
                         }
                         addOnFailureListener {
-                            // show a Toast to alert the user: "Failed to add location!!! Try again later!"
+                            binding.viewModel!!.showToast.value = "Failed to add location!!! Try again later!"
                         }
                     }
             } else {
