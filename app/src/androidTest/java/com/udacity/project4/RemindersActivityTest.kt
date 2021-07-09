@@ -2,10 +2,12 @@ package com.udacity.project4
 
 import android.app.Application
 import androidx.test.core.app.ActivityScenario
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.RootMatchers.withDecorView
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -13,6 +15,7 @@ import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import com.udacity.project4.authentication.AuthenticationActivity
 import com.udacity.project4.locationreminders.RemindersActivity
 import androidx.test.uiautomator.*
+import com.google.android.material.internal.ContextUtils.getActivity
 import com.udacity.project4.locationreminders.reminderslist.ReminderListFragment
 import com.udacity.project4.locationreminders.savereminder.SaveReminderFragment
 import com.udacity.project4.locationreminders.savereminder.selectreminderlocation.SelectLocationFragment
@@ -20,6 +23,7 @@ import com.udacity.project4.util.DataBindingIdlingResource
 import com.udacity.project4.util.monitorActivity
 import com.udacity.project4.utils.EspressoIdlingResource
 import kotlinx.coroutines.runBlocking
+import org.hamcrest.CoreMatchers.not
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -35,6 +39,11 @@ class RemindersActivityTest :
     private lateinit var appContext: Application
     // An Idling Resource that waits for Data Binding to have no pending bindings
     private val dataBindingIdlingResource = DataBindingIdlingResource()
+
+    @Before
+    fun init() {
+        appContext = getApplicationContext()
+    }
 
 
     /**
@@ -120,6 +129,9 @@ class RemindersActivityTest :
             device.wait(Until.hasObject(By.pkg(saveReminderFragmentPkgName)), 3_000)
 
             onView(withId(R.id.saveReminder)).perform(click())
+
+            onView(withText(R.string.reminder_saved)).inRoot(withDecorView(not(getActivity(appContext)!!.getWindow()
+                .getDecorView()))) .check(matches(isDisplayed()))
 
             onView(withText(title)).check(matches(isDisplayed()))
             onView(withText(description)).check(matches(isDisplayed()))

@@ -7,6 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
+import com.udacity.project4.locationreminders.data.dto.succeeded
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -65,6 +66,8 @@ class RemindersLocalRepositoryTest {
         Assert.assertThat(result.data.location, `is`("location"))
         Assert.assertThat(result.data.latitude, `is`(50.0))
         Assert.assertThat(result.data.longitude, `is`(50.0))
+
+        Assert.assertThat(result.succeeded, `is`(true))
     }
 
     @Test
