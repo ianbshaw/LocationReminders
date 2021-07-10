@@ -36,7 +36,6 @@ private const val LOCATION_PERMISSION_INDEX = 0
 private const val BACKGROUND_LOCATION_PERMISSION_INDEX = 1
 const val ACTION_GEOFENCE_EVENT = "com.udacity.project4.locationreminders.savereminder.ACTION_GEOFENCE_EVENT"
 const val GEOFENCE_RADIUS_IN_METERS = 100F
-val GEOFENCE_EXPIRATION_IN_MILLISECONDS = TimeUnit.DAYS.toMillis(7)
 const val REQUEST_LOCATION_PERMISSION = 1
 
 class SaveReminderFragment : BaseFragment() {
@@ -87,22 +86,13 @@ class SaveReminderFragment : BaseFragment() {
         }
 
         binding.saveReminder.setOnClickListener {
-            val title = _viewModel.reminderTitle.value
-            val description = _viewModel.reminderDescription.value
-            val location = _viewModel.reminderSelectedLocationStr.value
-            val latitude = _viewModel.latitude.value
-            val longitude = _viewModel.longitude.value
+            val reminder = _viewModel.getReminderDataItem()
 
-            val reminder = ReminderDataItem(title, description, location, latitude, longitude)
-
-            if (latitude != null && longitude != null) {
+            if (reminder.latitude != null && reminder.longitude != null) {
                 checkPermissionsAndStartGeofencing(reminder)
-                _viewModel.validateAndSaveReminder(reminder)
-                _viewModel.showToast.value = "Reminder Added!"
             } else {
                 _viewModel.showToast.value = "Please enter Reminder Details"
             }
-
         }
         geofencingClient = LocationServices.getGeofencingClient(requireActivity().application)
     }
@@ -114,7 +104,6 @@ class SaveReminderFragment : BaseFragment() {
     }
 
     private fun checkPermissionsAndStartGeofencing(reminder: ReminderDataItem) {
-       // if (viewModel.geofenceIsActive()) return
         if (foregroundAndBackgroundLocationPermissionApproved()) {
             checkDeviceLocationSettingsAndStartGeofence(reminder)
         } else {
@@ -137,8 +126,9 @@ class SaveReminderFragment : BaseFragment() {
         locationSettingsResponseTask.addOnFailureListener { exception ->
             if (exception is ResolvableApiException && resolve){
                 try {
-                    exception.startResolutionForResult(requireActivity(),
-                        REQUEST_TURN_DEVICE_LOCATION_ON)
+                    startIntentSenderForResult(geofencePendingIntent.intentSender,
+                        REQUEST_TURN_DEVICE_LOCATION_ON, null, 0, 0
+                        , 0 , null)
                 } catch (sendEx: IntentSender.SendIntentException) {
                     Log.d(TAG, "Error getting location settings resolution: " + sendEx.message)
                 }
@@ -163,7 +153,7 @@ class SaveReminderFragment : BaseFragment() {
         val geofence = Geofence.Builder()
             .setRequestId(reminder.id)
             .setCircularRegion(reminder.latitude!!, reminder.longitude!!, GEOFENCE_RADIUS_IN_METERS)
-            .setExpirationDuration(GEOFENCE_EXPIRATION_IN_MILLISECONDS)
+            .setExpirationDuration(Geofence.NEVER_EXPIRE)
             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
             .build()
 
@@ -176,6 +166,8 @@ class SaveReminderFragment : BaseFragment() {
             geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
                 addOnSuccessListener {
                     Log.i(TAG, "Geofence added: $id")
+                    _viewModel.validateAndSaveReminder(reminder)
+                    _viewModel.showToast.value = "Reminder Added!"
                 }
                 addOnFailureListener {
                     Log.i(TAG, "Geofence adding failed: ${it.localizedMessage}")

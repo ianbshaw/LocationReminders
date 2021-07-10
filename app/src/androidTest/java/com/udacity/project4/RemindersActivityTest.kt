@@ -118,7 +118,8 @@ class RemindersActivityTest :
 
             val x = device.displayWidth / 2
             val y = device.displayHeight / 2
-            device.click(x, y)
+            //device.click(x, y)
+            device.swipe(x, y, x, y, 400)
 
             val selectLocationStr = appContext.getString(R.string.select_location)
             device.wait(Until.findObject(By.text(selectLocationStr).clickable(true)), 1_000)
@@ -130,8 +131,10 @@ class RemindersActivityTest :
 
             onView(withId(R.id.saveReminder)).perform(click())
 
-            onView(withText(R.string.reminder_saved)).inRoot(withDecorView(not(getActivity(appContext)!!.getWindow()
-                .getDecorView()))) .check(matches(isDisplayed()))
+            onView(withText(R.string.reminder_saved)).inRoot(withDecorView(not(getActivity(
+                getApplicationContext())!!.window
+                .decorView
+            ))).check(matches(isDisplayed()))
 
             onView(withText(title)).check(matches(isDisplayed()))
             onView(withText(description)).check(matches(isDisplayed()))
