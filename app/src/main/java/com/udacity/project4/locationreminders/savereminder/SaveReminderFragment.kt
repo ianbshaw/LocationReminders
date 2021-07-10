@@ -73,8 +73,7 @@ class SaveReminderFragment : BaseFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_TURN_DEVICE_LOCATION_ON) {
-            addGeofence(_viewModel.getReminderDataItem())
-            _viewModel.validateAndSaveReminder(_viewModel.getReminderDataItem())
+            checkDeviceLocationSettingsAndStartGeofence(_viewModel.getReminderDataItem(), false)
         }
     }
 
