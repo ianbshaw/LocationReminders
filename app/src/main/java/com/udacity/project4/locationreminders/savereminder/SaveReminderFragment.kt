@@ -117,7 +117,7 @@ class SaveReminderFragment : BaseFragment() {
     private fun checkPermissionsAndStartGeofencing(reminder: ReminderDataItem) {
        // if (viewModel.geofenceIsActive()) return
         if (foregroundAndBackgroundLocationPermissionApproved()) {
-            checkDeviceLocationSettingsAndStartGeofence(true, reminder)
+            checkDeviceLocationSettingsAndStartGeofence(reminder)
         } else {
             requestForegroundAndBackgroundLocationPermissions()
         }
@@ -127,7 +127,7 @@ class SaveReminderFragment : BaseFragment() {
      * Starts the permission check and Geofence process only if the Geofence associated with the
      * current hint isn't yet active.
      */
-    private fun checkDeviceLocationSettingsAndStartGeofence(resolve:Boolean = true, reminder: ReminderDataItem) {
+    private fun checkDeviceLocationSettingsAndStartGeofence(reminder: ReminderDataItem, resolve:Boolean = true ) {
         val locationRequest = LocationRequest.create().apply {
             priority = LocationRequest.PRIORITY_LOW_POWER
         }
@@ -148,7 +148,7 @@ class SaveReminderFragment : BaseFragment() {
                     binding.fragmentSaveReminder,
                     R.string.location_required_error, Snackbar.LENGTH_INDEFINITE
                 ).setAction(android.R.string.ok) {
-                    checkDeviceLocationSettingsAndStartGeofence(true, reminder)
+                    checkDeviceLocationSettingsAndStartGeofence(reminder)
                 }.show()
             }
         }
@@ -261,7 +261,7 @@ class SaveReminderFragment : BaseFragment() {
                     })
                 }.show()
         } else {
-            checkDeviceLocationSettingsAndStartGeofence(true, _viewModel.getReminderDataItem())
+            checkDeviceLocationSettingsAndStartGeofence(_viewModel.getReminderDataItem())
         }
     }
 }
