@@ -1,7 +1,6 @@
 package com.udacity.project4.locationreminders.savereminder
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.PendingIntent
 import android.content.Intent
@@ -14,7 +13,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.common.api.ResolvableApiException
@@ -28,7 +26,6 @@ import com.udacity.project4.databinding.FragmentSaveReminderBinding
 import com.udacity.project4.locationreminders.geofence.GeofenceBroadcastReceiver
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import java.util.concurrent.TimeUnit
 
@@ -73,6 +70,14 @@ class SaveReminderFragment : BaseFragment() {
         return binding.root
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_TURN_DEVICE_LOCATION_ON) {
+            addGeofence(_viewModel.getReminderDataItem())
+            _viewModel.validateAndSaveReminder(_viewModel.getReminderDataItem())
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = this
@@ -99,27 +104,6 @@ class SaveReminderFragment : BaseFragment() {
                 _viewModel.showToast.value = "Please enter Reminder Details"
             }
 
-            /*if (latitude != null && longitude != null && title != null && description != null) {
-                geofencingClient.addGeofences(getGeofencingRequest(reminder), geofencePendingIntent)
-                    ?.run {
-                        addOnSuccessListener {
-                            Log.d(TAG, "Location added!!!")
-                            // save reminder to local db
-                            _viewModel.validateAndSaveReminder(reminder)
-                        }
-                        addOnFailureListener {
-                            binding.viewModel!!.showToast.value = "Failed to add location!!! Try again later!"
-                        }
-                    }
-            } else {
-                binding.viewModel!!.showToast.value = "Enter Reminder data"
-            }*/
-
-
-
-         /*   _viewModel.navigationCommand.value =
-                NavigationCommand.To(SaveReminderFragmentDirections.actionSaveReminderFragmentToReminderListFragment())*/
-          //  addGeofence(reminder.id, reminder.latitude!!, reminder.longitude!!)
         }
         geofencingClient = LocationServices.getGeofencingClient(requireActivity().application)
     }
@@ -202,11 +186,6 @@ class SaveReminderFragment : BaseFragment() {
         }
 
         Log.i(TAG,"Location permission not granted.")
-    }
-
-    override fun onStart() {
-        super.onStart()
-        //checkPermissionsAndStartGeofencing()
     }
 
     /*
