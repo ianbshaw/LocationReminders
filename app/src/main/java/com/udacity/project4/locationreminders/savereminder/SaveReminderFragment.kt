@@ -126,7 +126,7 @@ class SaveReminderFragment : BaseFragment() {
         locationSettingsResponseTask.addOnFailureListener { exception ->
             if (exception is ResolvableApiException && resolve){
                 try {
-                    startIntentSenderForResult(exception.getResolution().getIntentSender(),
+                    startIntentSenderForResult(exception.resolution.intentSender,
                         REQUEST_TURN_DEVICE_LOCATION_ON, null, 0, 0
                         , 0 , null)
                 } catch (sendEx: IntentSender.SendIntentException) {
@@ -167,7 +167,6 @@ class SaveReminderFragment : BaseFragment() {
                 addOnSuccessListener {
                     Log.i(TAG, "Geofence added: $id")
                     _viewModel.validateAndSaveReminder(reminder)
-                    _viewModel.showToast.value = "Reminder Added!"
                 }
                 addOnFailureListener {
                     Log.i(TAG, "Geofence adding failed: ${it.localizedMessage}")

@@ -104,7 +104,7 @@ class RemindersActivityTest :
         runBlocking {
             val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
             dataBindingIdlingResource.monitorActivity(activityScenario)
-            var activity = getActivity(activityScenario)
+            val activity = getActivity(activityScenario)
 
             onView(withId(R.id.addReminderFAB)).perform(click())
 
