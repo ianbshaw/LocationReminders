@@ -118,7 +118,6 @@ class RemindersActivityTest :
 
             val x = device.displayWidth / 2
             val y = device.displayHeight / 2
-            //device.click(x, y)
             device.swipe(x, y, x, y, 400)
 
             val selectLocationStr = getActivity(activityScenario)!!.getString(R.string.select_location)
@@ -138,7 +137,7 @@ class RemindersActivityTest :
         }
     }
 
-    @Test
+/*    @Test
     fun selectLocationFragment_doubleUpButton() {
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activityScenario)
@@ -147,14 +146,14 @@ class RemindersActivityTest :
 
         onView(withId(R.id.selectLocation)).perform(click())
 
-        onView(withContentDescription("Navigate up")).perform(click())
+        onView(withId(R.id.selectLocationFragment)).perform(pressBack())
         onView(withId(R.id.reminderTitle)).check(matches(isDisplayed()))
 
-        onView(withContentDescription("Navigate up")).perform(click())
+        onView(withId(R.id.saveReminderFragment)).perform(pressBack())
         onView(withId(R.id.noDataTextView)).check(matches(isDisplayed()))
 
         activityScenario.close()
-    }
+    }*/
 
     private fun getActivity(activityScenario: ActivityScenario<RemindersActivity>): Activity? {
         var activity: Activity? = null
