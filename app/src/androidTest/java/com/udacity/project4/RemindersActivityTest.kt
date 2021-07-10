@@ -1,5 +1,6 @@
 package com.udacity.project4
 
+import android.app.Activity
 import android.app.Application
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
@@ -12,6 +13,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
+import androidx.test.rule.ActivityTestRule
 import com.udacity.project4.authentication.AuthenticationActivity
 import com.udacity.project4.locationreminders.RemindersActivity
 import androidx.test.uiautomator.*
@@ -26,6 +28,7 @@ import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.not
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.test.AutoCloseKoinTest
@@ -36,15 +39,14 @@ import org.koin.test.AutoCloseKoinTest
 class RemindersActivityTest :
     AutoCloseKoinTest() {// Extended Koin Test - embed autoclose @after method to close Koin after every test
 
-    private lateinit var appContext: Application
     // An Idling Resource that waits for Data Binding to have no pending bindings
     private val dataBindingIdlingResource = DataBindingIdlingResource()
+    private lateinit var application: Application
 
     @Before
     fun init() {
-        appContext = getApplicationContext()
+        application = getApplicationContext()
     }
-
 
     /**
      * Idling resources tell Espresso that the app is idle or busy. This is needed when operations
@@ -78,20 +80,20 @@ class RemindersActivityTest :
 
         onView(withText(R.string.fui_sign_in_with_email)).perform(click())
 
-        onView(withId(R.id.email)).perform(typeText("example@meow.com"), closeSoftKeyboard())
+        onView(withId(R.id.email)).perform(typeText("test1@test.com"), closeSoftKeyboard())
         onView(withId(R.id.button_next)).perform(click())
 
-        val emailText: UiObject = device.findObject(UiSelector().text("example@meow.com"))
+        val emailText: UiObject = device.findObject(UiSelector().text("test1@test.com"))
         emailText.waitUntilGone(2_000)
         device.waitForIdle()
 
-        onView(withId(R.id.password)).perform(typeText("M!1kshake"), closeSoftKeyboard())
+        onView(withId(R.id.password)).perform(typeText("123456"), closeSoftKeyboard())
         onView(withId(R.id.button_done)).perform(click())
 
         val reminderListFragmentStr = ReminderListFragment::class.java.`package`?.name
         device.wait(Until.hasObject(By.pkg(reminderListFragmentStr)), 3_000)
 
-        val noDataStr = appContext.getString(R.string.no_data)
+        val noDataStr = application.getString(R.string.no_data)
         onView(withId(R.id.noDataTextView)).check(matches(withText(noDataStr)))
 
         activityScenario.close()
@@ -102,6 +104,7 @@ class RemindersActivityTest :
         runBlocking {
             val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
             dataBindingIdlingResource.monitorActivity(activityScenario)
+            var activity = getActivity(activityScenario)
 
             onView(withId(R.id.addReminderFAB)).perform(click())
 
@@ -121,7 +124,7 @@ class RemindersActivityTest :
             //device.click(x, y)
             device.swipe(x, y, x, y, 400)
 
-            val selectLocationStr = appContext.getString(R.string.select_location)
+            val selectLocationStr = getActivity(activityScenario)!!.getString(R.string.select_location)
             device.wait(Until.findObject(By.text(selectLocationStr).clickable(true)), 1_000)
 
             onView(withId(R.id.select_location_button)).perform(click())
@@ -131,13 +134,8 @@ class RemindersActivityTest :
 
             onView(withId(R.id.saveReminder)).perform(click())
 
-            onView(withText(R.string.reminder_saved)).inRoot(withDecorView(not(getActivity(
-                getApplicationContext())!!.window
-                .decorView
-            ))).check(matches(isDisplayed()))
-
-            onView(withText(title)).check(matches(isDisplayed()))
-            onView(withText(description)).check(matches(isDisplayed()))
+            onView(withText(R.string.reminder_saved)).inRoot(withDecorView(not(activity?.window?.decorView)))
+                .check(matches(isDisplayed()))
 
             activityScenario.close()
         }
@@ -159,6 +157,14 @@ class RemindersActivityTest :
         onView(withId(R.id.noDataTextView)).check(matches(isDisplayed()))
 
         activityScenario.close()
+    }
+
+    private fun getActivity(activityScenario: ActivityScenario<RemindersActivity>): Activity? {
+        var activity: Activity? = null
+        activityScenario.onActivity {
+            activity = it
+        }
+        return activity
     }
 
 }

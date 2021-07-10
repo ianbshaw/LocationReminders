@@ -126,7 +126,7 @@ class SaveReminderFragment : BaseFragment() {
         locationSettingsResponseTask.addOnFailureListener { exception ->
             if (exception is ResolvableApiException && resolve){
                 try {
-                    startIntentSenderForResult(geofencePendingIntent.intentSender,
+                    startIntentSenderForResult(exception.getResolution().getIntentSender(),
                         REQUEST_TURN_DEVICE_LOCATION_ON, null, 0, 0
                         , 0 , null)
                 } catch (sendEx: IntentSender.SendIntentException) {
